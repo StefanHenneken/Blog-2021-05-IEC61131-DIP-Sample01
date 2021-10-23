@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_LampUpDown" Id="{e5938590-1890-43a0-ba86-32547ab377e2}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_LampUpDown IMPLEMENTS I_Subject
+VAR
+	nLightLevel			:	BYTE(0..100);
+	_ipObserver			:	I_Observer;	
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="Attach" Id="{d670d29b-536a-4f65-a3ce-01855557f23a}">
+      <Declaration><![CDATA[METHOD Attach
+VAR_INPUT
+	ipObserver		: I_Observer;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF (ipObserver = 0) THEN
+	RETURN;
+END_IF
+_ipObserver := ipObserver;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Detach" Id="{c4c4c396-be35-4305-a634-3561a50debfd}">
+      <Declaration><![CDATA[METHOD Detach
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_ipObserver := 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="OneStepDown" Id="{eccc8046-24a1-4940-82a7-bde5c3e6c0ab}">
+      <Declaration><![CDATA[// Reduces the control value by 1 in the range of 10 to 100. 
+METHOD PUBLIC OneStepDown
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[nLightLevel := nLightLevel - 1;
+IF (nLightLevel < 10) THEN
+	nLightLevel := 10;
+END_IF
+IF (_ipObserver <> 0) THEN
+	_ipObserver.Update(nLightLevel);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="OneStepUp" Id="{bdc89d87-e6d0-409f-9392-70820315cfad}">
+      <Declaration><![CDATA[// Increments the control value by 1 in the range of 10 to 100.
+METHOD PUBLIC OneStepUp
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[nLightLevel := nLightLevel + 1;
+IF (nLightLevel > 100) THEN
+	nLightLevel := 100;
+END_IF
+IF (_ipObserver <> 0) THEN
+	_ipObserver.Update(nLightLevel);
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="OnOff" Id="{4e5634f0-9545-430f-86b8-452bc4855175}">
+      <Declaration><![CDATA[// Toggles the control value between 0 and 100.
+METHOD PUBLIC OnOff
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF (nLightLevel > 0) THEN
+	nLightLevel := 0;
+ELSE
+	nLightLevel := 100;
+END_IF
+IF (_ipObserver <> 0) THEN
+	_ipObserver.Update(nLightLevel);
+end_IF]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_LampUpDown">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_LampUpDown.Attach">
+      <LineId Id="7" Count="2" />
+      <LineId Id="6" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_LampUpDown.Detach">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_LampUpDown.OneStepDown">
+      <LineId Id="38" Count="0" />
+      <LineId Id="40" Count="1" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="34" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_LampUpDown.OneStepUp">
+      <LineId Id="21" Count="5" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="18" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_LampUpDown.OnOff">
+      <LineId Id="32" Count="3" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="26" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_Controller" Id="{057b5bd1-e33b-44a4-8eb0-93b60ce9e81d}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK PUBLIC FB_Controller
+VAR
+	fbLampOnOff			:	FB_LampOnOff();
+	fbLampSetDirect		:	FB_LampSetDirect();
+	fbLampUpDown		:	FB_LampUpDown();
+	fbActualValue		:	FB_AnalogValue();
+	_eActiveLamp		:	E_LampType;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="DimDown" Id="{130de151-930d-42fb-84c7-94f9e80ef2d1}">
+      <Declaration><![CDATA[// Reduces the control value by 5 in the range of 10 to 100. 
+METHOD PUBLIC DimDown
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE _eActiveLamp OF
+	E_LampType.OnOff:
+		fbLampOnOff.Off();
+	E_LampType.SetDirect:
+		IF (fbActualValue.nValue >= 15) THEN
+			fbLampSetDirect.SetLightLevel(fbActualValue.nValue - 5);
+		END_IF
+	E_LampType.UpDown:
+		IF (fbActualValue.nValue >= 15) THEN
+			fbLampUpDown.OneStepDown();
+			fbLampUpDown.OneStepDown();
+			fbLampUpDown.OneStepDown();
+			fbLampUpDown.OneStepDown();
+			fbLampUpDown.OneStepDown();
+		END_IF
+END_CASE
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="DimUp" Id="{6fad7f57-9367-4e6e-ba7a-7dfd0e3aeed8}">
+      <Declaration><![CDATA[// Increments the control value by 5 in the range of 10 to 100.
+METHOD PUBLIC DimUp
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE _eActiveLamp OF
+	E_LampType.OnOff:
+		fbLampOnOff.On();
+	E_LampType.SetDirect:
+		IF (fbActualValue.nValue <= 95) THEN
+			fbLampSetDirect.SetLightLevel(fbActualValue.nValue + 5);
+		END_IF
+	E_LampType.UpDown:
+		IF (fbActualValue.nValue <= 95) THEN
+			fbLampUpDown.OneStepUp();
+			fbLampUpDown.OneStepUp();
+			fbLampUpDown.OneStepUp();
+			fbLampUpDown.OneStepUp();
+			fbLampUpDown.OneStepUp();
+		END_IF
+END_CASE
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="eActiveLamp" Id="{1d4afd8b-887b-4e45-b31b-09967b3d8176}">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'variable'}
+PROPERTY PUBLIC eActiveLamp : E_LampType]]></Declaration>
+      <Get Name="Get" Id="{56df7f73-4924-448e-b4c7-e72d89e61bdc}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[eActiveLamp := _eActiveLamp;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{c2933ac7-b8ac-4726-b19a-e96cc3ec572f}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Off();
+
+fbLampOnOff.Detach();
+fbLampSetDirect.Detach();
+fbLampUpDown.Detach();
+
+CASE eActiveLamp OF
+	E_LampType.OnOff:
+		fbLampOnOff.Attach(fbActualValue);
+	E_LampType.SetDirect:
+		fbLampSetDirect.Attach(fbActualValue);
+	E_LampType.UpDown:
+		fbLampUpDown.Attach(fbActualValue);
+END_CASE
+
+_eActiveLamp := eActiveLamp;
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="Off" Id="{9d5e0538-50dd-4f19-a271-b30075978c0e}">
+      <Declaration><![CDATA[// Sets the control value to 0.
+METHOD PUBLIC Off
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE _eActiveLamp OF
+	E_LampType.OnOff:
+		fbLampOnOff.Off();
+	E_LampType.SetDirect:
+		fbLampSetDirect.SetLightLevel(0);
+	E_LampType.UpDown:
+		IF (fbActualValue.nValue > 0) THEN
+			fbLampUpDown.OnOff();
+		END_IF
+END_CASE
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="On" Id="{89c7d278-6585-48c0-967a-839fca58784f}">
+      <Declaration><![CDATA[// Sets the control value to 100.
+METHOD PUBLIC On
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE _eActiveLamp OF
+	E_LampType.OnOff:
+		fbLampOnOff.On();
+	E_LampType.SetDirect:
+		fbLampSetDirect.SetLightLevel(100);
+	E_LampType.UpDown:
+		IF (fbActualValue.nValue = 0) THEN
+			fbLampUpDown.OnOff();
+		END_IF
+END_CASE
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_Controller">
+      <LineId Id="38" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Controller.DimDown">
+      <LineId Id="96" Count="15" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Controller.DimUp">
+      <LineId Id="39" Count="15" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Controller.eActiveLamp.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Controller.eActiveLamp.Set">
+      <LineId Id="50" Count="1" />
+      <LineId Id="34" Count="13" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Controller.Off">
+      <LineId Id="22" Count="9" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Controller.On">
+      <LineId Id="19" Count="5" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

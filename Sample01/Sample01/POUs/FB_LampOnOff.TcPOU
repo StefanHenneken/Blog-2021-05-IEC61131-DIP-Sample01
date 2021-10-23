@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_LampOnOff" Id="{55e66dc1-05c3-43f8-9bc8-5075ca0cd865}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK PUBLIC FB_LampOnOff IMPLEMENTS I_Subject
+VAR
+	nLightLevel			:	BYTE(0..100);
+	_ipObserver			:	I_Observer;	
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="Attach" Id="{37e3754b-e80b-4217-ae1f-9f5d2206bf53}">
+      <Declaration><![CDATA[METHOD Attach
+VAR_INPUT
+	ipObserver		: I_Observer;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF (ipObserver = 0) THEN
+	RETURN;
+END_IF
+_ipObserver := ipObserver;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Detach" Id="{aadac412-1d51-49a6-96cd-c8bde1a89977}">
+      <Declaration><![CDATA[METHOD Detach
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_ipObserver := 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Off" Id="{54f23483-66d0-4707-9581-54558ff84187}">
+      <Declaration><![CDATA[// Sets the control value to 0.
+METHOD PUBLIC Off
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[nLightLevel := 0;
+IF (_ipObserver <> 0) THEN
+	_ipObserver.Update(nLightLevel);
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="On" Id="{ea9cd1d9-8590-4b0b-b6ec-c19fb0ca1b1d}">
+      <Declaration><![CDATA[// Sets the control value to 100.
+METHOD PUBLIC On
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[nLightLevel := 100;
+IF (_ipObserver <> 0) THEN
+	_ipObserver.Update(nLightLevel);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_LampOnOff">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_LampOnOff.Attach">
+      <LineId Id="8" Count="1" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_LampOnOff.Detach">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_LampOnOff.Off">
+      <LineId Id="11" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="6" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_LampOnOff.On">
+      <LineId Id="9" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="6" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
