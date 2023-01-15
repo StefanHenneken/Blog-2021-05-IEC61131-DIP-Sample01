@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_LampSetDirect" Id="{c9363aa1-33e3-41da-adea-7faeb59d6855}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK PUBLIC FB_LampSetDirect IMPLEMENTS I_Subject
 VAR
-	nLightLevel			:	BYTE(0..100);
+	nLightLevel			:	USINT;
 	_ipObserver			:	I_Observer;	
 END_VAR]]></Declaration>
     <Implementation>
@@ -33,7 +33,7 @@ _ipObserver := ipObserver;]]></ST>
       <Declaration><![CDATA[// Sets the control value to a value between 0 and 100.
 METHOD PUBLIC SetLightLevel
 VAR_INPUT
-	nNewLightLevel		:	BYTE(0..100);
+	nNewLightLevel		:	USINT(0..100);
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -44,22 +44,5 @@ END_IF
 ]]></ST>
       </Implementation>
     </Method>
-    <LineIds Name="FB_LampSetDirect">
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_LampSetDirect.Attach">
-      <LineId Id="7" Count="2" />
-      <LineId Id="6" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_LampSetDirect.Detach">
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_LampSetDirect.SetLightLevel">
-      <LineId Id="19" Count="0" />
-      <LineId Id="11" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="12" Count="0" />
-      <LineId Id="18" Count="0" />
-    </LineIds>
   </POU>
 </TcPlcObject>
